@@ -1,0 +1,5 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{\numberline {1}Estimation Under Additive Normal Noise}{2}{section.1}%
+\contentsline {section}{\numberline {2}Exponential Case}{5}{section.2}%
+\contentsline {section}{\numberline {3}Estimator Comparison}{7}{section.3}%
+\contentsline {section}{\numberline {4}Conclusion}{8}{section.4}%
