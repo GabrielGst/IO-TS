@@ -1,0 +1,77 @@
+\section{Introduction}
+
+We consider an image sequence $f_{k}(x, y), k \in[1, K], x \in[1, M], y \in[1, N]$. In our case, in regard to a reference image, each following image in the sequence can be registered on the reference by a rotation of angle $\theta_k$ and a translation by a vector $\tau_k = (x-x_k, y-y_k)$. In our situation, we know there is no rotation in the sequence so we want to estimate the parameters $\tau_k$ for each image.
+
+
+\begin{align*}
+\forall \; k>1, \quad f_k(x, y) &= f_{1}\left(x-x_{k}, y-y_{k}\right) + b(x, y) \\
+\forall \; k>1, \quad f_{k}(x_i, y_j) &= f_{1}\left(x_i-x_{k}, y_j-y_{k}\right) + b_{k}(x_i, y_j)
+\end{align*}
+
+Here, $f$ is probabilist due to the nature of $b$, while $f_1$ is determinist. We sample the signal so it is now a serie of discret value, taken at pixel position $(i, j)$.
+
+In the case of a normalized signal, because the log-likelyhood shows a mean-square difference, one can show that its derivative is proportional to the scalar product of the observed signal $f_k$ and the model signal $f_1$. If the noise is gaussian, then MLE is optimal, and thus the matched filter is optimal. If the noise is correlated (covariance matrix $\Gamma$), one can substitute the signal to whitened the noise : consider $\Gamma^{-1} . f$ and $\Gamma^{-1} . r(x, y)$.
+
+The estimator is then :
+
+
+\begin{equation}
+\hat{\tau_k} = arg \; max \left[ f_k^T\Gamma^{-1} f_1 \right]
+\end{equation}
+
+And if the noise is uncorrelated, then $\Gamma^{-1} = Id$.
+
+\section{Registration algorithm}
+We consider a white noise, and we want to express the scalar product :
+
+
+\begin{equation}
+f_k^T \cdot f_1 = \sum_{x,y} f_k . f_1 = a . A(\tau_k,\tau_1) + b'(\tau_k), \quad b'(\tau_k) = b^T f_1(\tau_k)
+\end{equation}
+
+We suppose that the ambiguity function $A$ is symetrical with respect to $\theta_0$ and thus is unbiased.
+
+The ambiguity function is equal to the autocorrelation function of the reference signal $f_1$ with $\tau$ the translation and $\tau_k$ the true translation for image $k$ : $ A(\tau, \tau_k) = C(\tau, \tau_k) $. 
+
+By computing the autocorrelation in the Fourier domain, we can estimate the translation of the centers of the two images. To test the obtain translation vector, one could simply roll the unregistered image according to that vector and then substract the two images and observe a uniform noise. If some shapes are still visible then the shift was not right.
+
+\subsection{Results}
+Here the image is of shape (300 x 500) thus the center is located at (150,250). We select the second image of the sequence and computes the correlation between the reference image and the selected image to find a translation vector (1,4).
+
+
+
+We then roll the selected image according to that translation vector and substract the two : we observe a white noise over the screen so we conclude that the estimated translation was correct.
+
+
+\subsection{Blocks}
+For sake of memory resources or because of time calculation, it is not always possible do compute the Fourier transform of the whole image. In this case, one has to compute the shift from a small region of the reference image. We will take a $30 \times 30$ pixels wide region.
+
+The goal is then to choose the region of the image that leads to the highest precision for shift estimation.
+
+
+
+
+\section{Optimality}
+To find the optimal block for shift estimation, one can compute the Fisher information matrix (see the course p.66) and finally get the CRLB for $x_k, y_k$ :
+
+
+\begin{align*}
+VAR(\hat{x_k}) & = \frac{SNR^{-1}}{4\pi^2} . \frac{\overline{\Delta \nu \nu^2}}{\overline{\Delta \mu \mu^2} \times \overline{\Delta \nu \nu^2} - \left( \overline{\Delta \mu \nu^2} \right)^2} \\
+VAR(\hat{y_k}) & = \frac{SNR^{-1}}{4\pi^2} . \frac{\overline{\Delta \mu \mu^2}}{\overline{\Delta \mu \mu^2} \times \overline{\Delta \nu \nu^2} - \left( \overline{\Delta \mu \nu^2} \right)^2}
+\end{align*}
+
+
+Where $\mu$ is the fourier variable for $x$ and $\nu$ is the fourier variable for $y$, and $\sqrt{\overline{\Delta \mu^2}}$ represents the spectral "width" of the signal along the x-axis. We have :
+
+$$
+\sqrt{\overline{\Delta \mu^2}} = \iint \nu^2 |\hat{f}(\mu,\nu)|^2 d\nu d\mu
+$$
+
+Here, because the noisy signal is separable, we have $ \overline{\Delta \mu \nu^2} = 0 $. The we get :
+
+
+\begin{align*}
+VAR(\hat{x_k}) & = \frac{SNR^{-1}}{4\pi^2\overline{\Delta \mu \mu^2}} \\
+VAR(\hat{y_k}) & = \frac{SNR^{-1}}{4\pi^2\overline{\Delta \nu \nu^2}}
+\end{align*}
+
