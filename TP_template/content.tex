@@ -38,20 +38,91 @@ By computing the autocorrelation in the Fourier domain, we can estimate the tran
 \subsection{Results}
 Here the image is of shape (300 x 500) thus the center is located at (150,250). We select the second image of the sequence and computes the correlation between the reference image and the selected image to find a translation vector (1,4).
 
-
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{corr-1.png}
+	\caption{Correlation between reference image and second unregistered image}
+	\label{fig:corr-1}
+\end{figure}
 
 We then roll the selected image according to that translation vector and substract the two : we observe a white noise over the screen so we conclude that the estimated translation was correct.
 
+\begin{figure}[h]
+    \centering
+    \subfloat[Substraction before rolling]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{substract-1.png}
+        \label{fig:substract-before}
+    }
+	\subfloat[Substraction after rolling]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{substract-2.png}
+        \label{fig:substract-after}
+    }
+	\caption{Registration check}
+\end{figure}
 
+Because the defined algorithm has been verified, we present here the translation vector (in red) onto the reference image.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Necessary translation for registering the image]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{shift.png}
+        \label{fig:translation}
+    }
+	\subfloat[zoom onto the translation vector]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{shift-detail.png}
+        \label{fig:translation-detail}
+    }
+	\caption{Translation vector}
+\end{figure}
+
+\pagebreak
 \subsection{Blocks}
 For sake of memory resources or because of time calculation, it is not always possible do compute the Fourier transform of the whole image. In this case, one has to compute the shift from a small region of the reference image. We will take a $30 \times 30$ pixels wide region.
 
 The goal is then to choose the region of the image that leads to the highest precision for shift estimation.
 
+Here we present 5 blocks that we chose according to be different parts of the image. We also plot the Harris corner detection at 1\% of the maximum of the Harris score.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{blocks.png}
+	\caption{Blocks on the reference image}
+	\label{fig:blocks}
+\end{figure}
+
+We then need to find the different position of the block onto the reference and the unregistered image. For that, we compute the correlation between the block and the reference image, which leads to the position of the block on the reference, and we compute the correlation of the block and the unregistered image, which gives the corresponding position on the unregistered image. By computing the difference one should find the neccessary shift to register the image. 
+
+\begin{figure}[h]
+    \centering
+    \subfloat[correlation over the reference image]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{block-ref.png}
+        \label{fig:corr-ref}
+    }
+	\subfloat[correlation over the unregistered image]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{block-unregistered.png}
+        \label{fig:corr-unregistered}
+    }
+	\caption{Correlation over 30 x 30 pixels blocks}
+\end{figure}
 
 
+We then compare the translation vectors with the true one, checked with the substraction test.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.65]{blocks-data.png}
+	\caption{Computed translation vector}
+	\label{fig:blocks-data}
+\end{figure}
 
-\section{Optimality}
+We observe that the blocks 1, 2 and 4 always give the correct translation vector. This is also the blocks the most filled with Harris corners, which are points with a maximum gradient in intensity. We thus suggest that to find the optimal block, one should focus on a block with high intensity variations.
+
+\subsection{Optimality}
 To find the optimal block for shift estimation, one can compute the Fisher information matrix (see the course p.66) and finally get the CRLB for $x_k, y_k$ :
 
 
@@ -75,3 +146,128 @@ VAR(\hat{x_k}) & = \frac{SNR^{-1}}{4\pi^2\overline{\Delta \mu \mu^2}} \\
 VAR(\hat{y_k}) & = \frac{SNR^{-1}}{4\pi^2\overline{\Delta \nu \nu^2}}
 \end{align*}
 
+\section{Detection using the matched filter}
+In radar detection, one must test two hypotheses :
+\begin{itemize}
+    \item Hypothesis H0 $\quad x(t)=b(t)$
+    \item Hypothesis H1 $\quad x(t)=a s(t)+b(t)$
+\end{itemize}
+where :
+
+\begin{itemize}
+    \item $x(t)$ is the measured signal,
+    \item $s(t)$ is the emitted pulse, known by the user,
+    \item $a$ is the attenuation factor,
+    \item $b(t)$ is the noise on the measure.
+\end{itemize}
+
+
+We assume that we know where the target may be. We only want to know if the target is or not at this position. We first only consider the detection problem. In reality, we don't know if there is a target, neither its possible position. We must detect and estimate at the same time. That is what we will study in the image processing application.
+
+If the noise $b(t)$ is white, the optimal detector (matched filter) is a correlation between the measured signal and the emitted pulse :
+
+$$
+F(\theta)=\int x(t) s(t-\theta) d t
+$$
+
+We only need to calculate this expression at one point (chosen here as 0 ) if we assume that the position is known. Thus, we have to test :
+
+$$
+F(0)=\int x(t) s(t) d t
+$$
+
+This value is then compared to a threshold in order to take a decision.
+
+\pagebreak
+\subsection{Noisy gaussian pulse}
+The SNR (Signal to Noise Ratio) of the detection is defined by :
+
+$$
+\mathrm{SNR}=\frac{a^{2} E_{s}}{\sigma^{2}} \quad \mathrm{SNR}_{\mathrm{dB}}=10 \log \left(\frac{a^{2} E_{s}}{\sigma^{2}}\right)
+$$
+
+where $E_{s}$ is the energy of the emitted pulse: $E_{s}=\int|s(t)|^{2} d t$ and $\sigma^{2}$ the variance of the noise $b(t)$. We assume that the temporal shape of the pulse is gaussian and the attenuation factor $a=1$. We suppose also that $b(t)$ is a gaussian white noise.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.55]{noisy.png}
+	\caption{Noisy signal}
+	\label{fig:noisy}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Clean signal]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{clean-signal.png}
+        \label{fig:clean}
+    }
+	\subfloat[Filtered signal]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{filtered.png}
+        \label{fig:filtered}
+    }
+	\caption{Clean and filtered signal}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.55]{fake-alarm.png}
+	\caption{Fake alarm and detection}
+	\label{fig:fake-detection}
+\end{figure}
+
+We run the script several times, and we observe that the mean of the Fake Alarm signal seem always inferior to the difference between the means of the FA signal and the Detection signal (which remain constant over iterations, approximately equals to 10). On the contrary, the mean of the Detection signal is sometimes superior, sometimes inferior to this threshold.
+
+As a result, one can define the difference between the means as a threshold to compare the Fake Alarm mean to.
+
+Over the iteration, one can also observe that the mean of the Detection signal seems always superior to the mean of the Fake Alarm signal. Thus, one could try to see if those means converge toward a certain value over the iterations in order to see if another threshold could be defined.
+
+However, one could notice that here, the noisy signal is made of the clean signal without any translation over time. Thus, it is not needed to compute the whole correlation of the signal : one could simply look at the value of the correlation function at $\theta = 0 $ (i.e. no translation at all). In this case, it seems that 25 is a suitable threshold.
+
+Notice that in the case of a translated clean signal, one could look at the maximum of the correlation function to estimate the value of the translation in the case of a detection.
+
+\subsection{ROC curves}
+The Receiver Operating Characteristic is a curve of the detection probability versus false alarm probability for all the threshold possible values.
+
+\subsection{OCR in a text}
+Here we wish to detect a character in a text. In this case we don't know its position. We must address the "detection-estimation" problem. The matched filter can be used for that purpose :
+\begin{itemize}
+    \item a peak in the matched filter output indicate if the character is detected,
+    \item the peak position gives an estimate of the character position.
+\end{itemize}
+
+First, we need to extract a perfect caracter from the perfect image in order to perform a correlation between the image and the selected caracter. Then, if the process is a success, we will perform the correlation between the same caracter and a noisy image to test the robustness of the matched filter.
+
+In order to test both the detection and estimation performed by the match filter, we decide to draw a circle centered on each estimated position of detected correlation on the image.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Correlation with character]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{correlation-text.png}
+        \label{fig:detection-correlation}
+    }
+	\subfloat[Detected characters]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{correlation-text-shape.png}
+        \label{fig:detection-shape}
+    }
+	\caption{Detection in perfect text}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Inntensity background gradient over image]{
+        \centering
+        \includegraphics[width=0.45\textwidth]{noisy-text.png}
+        \label{fig:}
+    }
+	\subfloat[fake-alarm]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{noisy-text-shape.png}
+        \label{fig:fake-alarm}
+    }
+	\caption{Fake alarm on noisy text}
+\end{figure}
+\pagebreak

@@ -1,1 +1,24 @@
 \babel@toc {french}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Correlation between reference image and second unregistered image}}{3}{figure.caption.2}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Registration check}}{3}{figure.caption.3}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Substraction before rolling}}}{3}{subfigure.2.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Substraction after rolling}}}{3}{subfigure.2.2}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Translation vector}}{4}{figure.caption.4}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Necessary translation for registering the image}}}{4}{subfigure.3.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {zoom onto the translation vector}}}{4}{subfigure.3.2}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Blocks on the reference image}}{4}{figure.caption.5}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Correlation over 30 x 30 pixels blocks}}{5}{figure.caption.6}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {correlation over the reference image}}}{5}{subfigure.5.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {correlation over the unregistered image}}}{5}{subfigure.5.2}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Computed translation vector}}{5}{figure.caption.7}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Noisy signal}}{7}{figure.caption.8}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Clean and filtered signal}}{7}{figure.caption.9}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Clean signal}}}{7}{subfigure.8.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Filtered signal}}}{7}{subfigure.8.2}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Fake alarm and detection}}{8}{figure.caption.10}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Detection in perfect text}}{9}{figure.caption.11}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Correlation with character}}}{9}{subfigure.10.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Detected characters}}}{9}{subfigure.10.2}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Fake alarm on noisy text}}{9}{figure.caption.12}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Inntensity background gradient over image}}}{9}{subfigure.11.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {fake-alarm}}}{9}{subfigure.11.2}%
