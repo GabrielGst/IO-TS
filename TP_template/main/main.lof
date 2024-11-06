@@ -19,6 +19,6 @@
 \contentsline {figure}{\numberline {10}{\ignorespaces Detection in perfect text}}{9}{figure.caption.11}%
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Correlation with character}}}{9}{subfigure.10.1}%
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Detected characters}}}{9}{subfigure.10.2}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Fake alarm on noisy text}}{9}{figure.caption.12}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Inntensity background gradient over image}}}{9}{subfigure.11.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {fake-alarm}}}{9}{subfigure.11.2}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Fake alarm on noisy text}}{10}{figure.caption.12}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Inntensity background gradient over image}}}{10}{subfigure.11.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {fake-alarm}}}{10}{subfigure.11.2}%

@@ -228,7 +228,12 @@ However, one could notice that here, the noisy signal is made of the clean signa
 Notice that in the case of a translated clean signal, one could look at the maximum of the correlation function to estimate the value of the translation in the case of a detection.
 
 \subsection{ROC curves}
-The Receiver Operating Characteristic is a curve of the detection probability versus false alarm probability for all the threshold possible values.
+The Receiver Operating Characteristic is a curve of the detection probability versus false alarm probability for all the threshold possible values. According to the following overlaying histograms, the optimal threshold is located at the intersection of the two histograms. The threshold defines what values are considered as a detection and which are not. Because the histograms overlay, the threshold implies that a portion of the considered detected values are not linked to an actual detection (fake alarm detection), this is illustrated by the part of the H0 hypothesis histogram above the defined threshold. It reciprocaly implies that a portion of the values corresponding to an actual detection are not considered as so (non-detection values, corresponding to the H1 hypothesis histogram values under the threshold).
+
+
+So, one could plot the probability of fake alarm detection according to a varaition of the threshold, and one could also do the same for the non-detection case. Thoses probabilities are defined by the area under the histograms in the fake alarm and non-detection values, and thus thoses curves would be varying with the SNR. So to sum up, one could plot the ROC curve as a function of the SNR. To do that, we will need to fit the distribution of the two hypothesis with a gaussian curve in order to find the intersection point and computes the probabilities.
+
+
 
 \subsection{OCR in a text}
 Here we wish to detect a character in a text. In this case we don't know its position. We must address the "detection-estimation" problem. The matched filter can be used for that purpose :
