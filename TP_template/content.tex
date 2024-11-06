@@ -230,8 +230,43 @@ Notice that in the case of a translated clean signal, one could look at the maxi
 \subsection{ROC curves}
 The Receiver Operating Characteristic is a curve of the detection probability versus false alarm probability for all the threshold possible values. According to the following overlaying histograms, the optimal threshold is located at the intersection of the two histograms. The threshold defines what values are considered as a detection and which are not. Because the histograms overlay, the threshold implies that a portion of the considered detected values are not linked to an actual detection (fake alarm detection), this is illustrated by the part of the H0 hypothesis histogram above the defined threshold. It reciprocaly implies that a portion of the values corresponding to an actual detection are not considered as so (non-detection values, corresponding to the H1 hypothesis histogram values under the threshold).
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.65]{hist_6.png}
+	\caption{Histograms of H0 and H1 with SNR = 6}
+	\label{fig:hist6}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+	\subfloat[Integration at optimal threshold]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{hist_min_6.png}
+        \label{fig:integ6}
+    }
+    \subfloat[ROC curve]{
+		\centering
+        \includegraphics[width=0.45\textwidth]{ROC_6.png}
+        \label{fig:ROC6}
+    }
+	\caption{H0 and H1 hypothesis for SNR = 6}
+\end{figure}
+
 
 So, one could plot the probability of fake alarm detection according to a varaition of the threshold, and one could also do the same for the non-detection case. Thoses probabilities are defined by the area under the histograms in the fake alarm and non-detection values, and thus thoses curves would be varying with the SNR. So to sum up, one could plot the ROC curve as a function of the SNR. To do that, we will need to fit the distribution of the two hypothesis with a gaussian curve in order to find the intersection point and computes the probabilities.
+
+A ROC curve with an inflection point in the top-left corner (0, 1), where represents an optimal detector. In this scenario, there are no false positives or false negatives. This behavior is typically observed in simulations when the SNR reaches values of 16 or 20.
+
+As the signal-to-noise ratio (SNR) decreases, the target signal becomes harder to detect as it is increasingly masked by surrounding noise. Consequently, the system's ability to correctly detect the signal decreases, leading to more false positives (detection errors) and fewer true positives (correct detections). Graphically, as the SNR approaches zero, the inflection point of the ROC curve shifts closer to the diagonal from (0, 0) to (1, 1), representing a worst-case detector governed by chance.
+
+This diagonal splits the ROC space: points above it indicate good detection results (better than chance), while points below it (which don't occur in practice) would represent worse-than-random results.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.55]{ROCs.png}
+	\caption{ROC curves for varying SNR}
+	\label{fig:ROCs}
+\end{figure}
 
 
 
@@ -261,9 +296,11 @@ In order to test both the detection and estimation performed by the match filter
 	\caption{Detection in perfect text}
 \end{figure}
 
+Here we present the detection of the letter "a" which was a success due to its unique features. This was not the case with the letter "u" nor "s" because their features ressemble too much to other letters and thus a lot of fake alarm occured. In the picture below, we present the detection in a noisy image, were the background and the letters are not uniform, we observe a gradient of intensity from the top to the bottom of the image, thus leading to a correlation value higher in the high intensity zones, and thus a lot of fake alarm. This illustrate the need of image pre-processing before trying use detection algorithm such as the matched filter.
+
 \begin{figure}[h]
     \centering
-    \subfloat[Inntensity background gradient over image]{
+    \subfloat[Intensity background gradient over image]{
         \centering
         \includegraphics[width=0.45\textwidth]{noisy-text.png}
         \label{fig:}
@@ -276,3 +313,7 @@ In order to test both the detection and estimation performed by the match filter
 	\caption{Fake alarm on noisy text}
 \end{figure}
 \pagebreak
+
+\section{Conclusion}
+
+The results of this study highlight the relevance of using a matched filter for both estimation and detection tasks. For estimating inter-frame displacements, the filter proved to be highly effective. However, in detection contexts, its performance strongly depends on situation-specific parameters. In particular, the signal-to-noise ratio (SNR) significantly impacts the likelihood of false alarms and, therefore, the overall detection efficiency.

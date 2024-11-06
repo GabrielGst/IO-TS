@@ -16,9 +16,14 @@
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Clean signal}}}{7}{subfigure.8.1}%
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Filtered signal}}}{7}{subfigure.8.2}%
 \contentsline {figure}{\numberline {9}{\ignorespaces Fake alarm and detection}}{8}{figure.caption.10}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Detection in perfect text}}{9}{figure.caption.11}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Correlation with character}}}{9}{subfigure.10.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Detected characters}}}{9}{subfigure.10.2}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Fake alarm on noisy text}}{10}{figure.caption.12}%
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Inntensity background gradient over image}}}{10}{subfigure.11.1}%
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {fake-alarm}}}{10}{subfigure.11.2}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Histograms of H0 and H1 with SNR = 6}}{9}{figure.caption.11}%
+\contentsline {figure}{\numberline {11}{\ignorespaces H0 and H1 hypothesis for SNR = 6}}{9}{figure.caption.12}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Integration at optimal threshold}}}{9}{subfigure.11.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {ROC curve}}}{9}{subfigure.11.2}%
+\contentsline {figure}{\numberline {12}{\ignorespaces ROC curves for varying SNR}}{10}{figure.caption.13}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Detection in perfect text}}{11}{figure.caption.14}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Correlation with character}}}{11}{subfigure.13.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Detected characters}}}{11}{subfigure.13.2}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Fake alarm on noisy text}}{11}{figure.caption.15}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Intensity background gradient over image}}}{11}{subfigure.14.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {fake-alarm}}}{11}{subfigure.14.2}%
