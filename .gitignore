@@ -1,2 +1,5 @@
 # directory
 .venv
+
+# matlab material
+*.mat
