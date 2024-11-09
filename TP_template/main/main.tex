@@ -1,0 +1,90 @@
+\documentclass[a4paper,12pt]{article}
+
+%=========== PACKAGES ================
+
+\usepackage[french]{babel}
+\usepackage[utf8x]{inputenc}
+\setlength{\headheight}{20.14264pt}
+\addtolength{\topmargin}{-8.14264pt}
+%\usepackage{subfigure}
+%\usepackage{subcaption}
+% pour gérer les positionnement d'images
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{../Pictures/}}
+\usepackage{wrapfig}
+\usepackage[justification=centering]{caption}
+%\usepackage{enumitem}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{url}
+
+%pour les informations sur un document compilé en PDF et les liens externes / internes
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+%pour la mise en page des tableaux
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage[final]{pdfpages} 
+\usepackage{placeins}
+%pour utiliser \floatbarrier
+%espacement entre les lignes
+\usepackage{setspace}
+%modifier la mise en page de l'abstract
+%\usepackage{abstract}
+%police et mise en page (marges) du document
+\usepackage[T1]{fontenc}
+\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+%Pour les galerie d'images
+\usepackage{subfig}
+%\usepackage{titlesec}
+\usepackage{sectsty}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{fancyhdr}
+\usepackage{stmaryrd}
+\usepackage{amssymb}
+\usepackage{calrsfs}
+\DeclareMathOperator{\e}{e}
+\parskip=3pt
+
+
+%======= INFORMATION ET REGLES ==============
+
+\hypersetup{
+% Information sur le document
+pdfauthor = {Gabriel Gostiaux},	% Auteurs
+pdftitle = {Estimation and Detection using the Matched Filter},   % Titre du document
+pdfsubject = {Estimation and Detection},		    % Sujet
+pdfstartview={FitH}}% ajuste la page à la largeur de l'écran
+
+%======= EN-TETE ET PIED DE PAGE ==========
+
+\pagestyle{fancy}
+\fancyhead[L]{FED - Practical 4 and 5}
+\fancyhead[R]{\includegraphics[width=0.2\textwidth]{Logo-IOGS.png}}
+\renewcommand{\headrulewidth}{1pt}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[L]{Gostiaux Gabriel}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+%======== DEBUT DU DOCUMENT ==========
+
+\begin{document}
+
+\input{../Page_garde.tex}
+\tableofcontents
+\clearpage
+\input{../content.tex}
+\listoffigures
+\end{document}
