@@ -3,3 +3,6 @@
 
 # matlab material
 *.mat
+
+# data file
+*.csv

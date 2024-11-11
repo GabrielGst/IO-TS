@@ -1,0 +1,4 @@
+I will not have time to apply the following method, nevertheles, I wish to present it here.
+Regarding the commputation time needed to find minimums of the MLE, one should first compute the full LLH of the image, then locate the maxima with a simple np.max().
+Then, one could use those unaccurate maxima as initial guesses for the fmin algorithm that computes the LLH functions and evaluate it at multiple points.
+Then, ideally, since fmin returns decimal values, one could set up and use a super resolution algorithm to place the maximas in a bigger grid.
