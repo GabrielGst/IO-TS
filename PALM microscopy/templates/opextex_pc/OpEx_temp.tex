@@ -29,6 +29,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{amsmath} % Required for equation and aligned environments
+\usepackage{hyperref}
 
  %\usepackage{ae} %%for Computer Modern fonts
 
@@ -52,8 +53,6 @@
 \begin{abstract*}
 In this study, we introduce a computationally efficient approach for generating super-resolution frames in Photoactivated Localization Microscopy (PALM) by accelerating the processing pipeline. The method is designed to optimize both the localization accuracy and processing speed, making it particularly suitable for medium-large datasets.
 
-Our results demonstrate that this streamlined approach achieves robust performance in generating super-resolution PALM frames with significant reductions in processing time compared to the basic method, making it a good start for high-throughput super-resolution imaging applications.
-
 \textbf{Keywords:} PALM Microscopy, sub-pixel superresolution, python. 
 
 \end{abstract*}
@@ -63,12 +62,17 @@ Our results demonstrate that this streamlined approach achieves robust performan
 %%%%%%%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{thebibliography}{99}
 
-\bibitem{gallo99} K. Gallo and G. Assanto, ``All-optical diode based on second-harmonic generation in an asymmetric waveguide,'' \josab {\bf 16,} 267--269 (1999).
+\bibitem{goudail} F. Goudail, ``Fundamental of Estimationa and Detection,'' IOGS {\bf chap. 5,} 59--69 (2023).
+
+\bibitem{labwork} F. Goudail, D. Bloch, O. Leveque, ``FED labworks and projects,'' IOGS {\bf lab 3-4-5,} (2024)
+
+\bibitem{project} T. Molle Heredia, M. Denain, ``Microscopie PALM,'' IOGS {\bf sect. 2.2, 2.3} 4--5, (2023)
 
 \end{thebibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%  body  %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+
 PALM (Photoactivated Localization Microscopy) is a high-resolution imaging technique that surpasses the diffraction limit. It relies on the isolation of emitters selectively tagged with a fluorescent molecule, and the fitting of their Point Spread Function (PSF). The fluorescent molecules emit light when stimulated by a laser. This approach enables the precise localization of isolated emitters with an accuracy beyond the Rayleigh criterion, thus providing "super-resolution" down to around 10 nm. This technique, developed by Eric Betzig and his team in 2006, was awarded the Nobel Prize in Chemistry in 2014. It is of great importance due to its ability to enhance the resolution of existing images. Because this method is implemented with noisy frames, one should rely on estimation and detection theory to retrieve the precise coordinates of the emitters.
 
 The workflow begins with a rigorous noise analysis of acquired frames, enabling the subsequent likelyhood computation steps to operate with enhanced precision. Our algorithm leverages a matched filter for likelihood calculation across frames, a critical step in improving computation time.
@@ -76,6 +80,58 @@ The workflow begins with a rigorous noise analysis of acquired frames, enabling 
 To accelerate the localization process, we identify initial guesses for molecule positions using a simple peak detection strategy via the numpy.max function. This initial estimation significantly reduces the computational complexity at the cost of sacrificing accuracy. For precise sub-pixel localization, we then employ the Maximum Likelihood Estimator (MLE) method, with optimization executed through the scipy.fmin function. This choice provides a computational efficiency and high-resolution localization, as it can then swiftly converges to optimal coordinates.
 
 \section{Precision analysis}
+We have a test image presenting 10 PSF and an array containing the true coordinates of the emitters producing such PSF. In this section we present the analysis of the noise and the influence of the imaging parameters (location of the emitters onto the pixel array and PSF FWHM).
+
+The data used in this study is stored as .mat files which can be loaded in our python environment through the function loadmat of the dependency scipy.io.
+
+\subsection{Noise analysis}
+
+Because the acquired frames are noisy, one should begin by understanding the noise before going forward in the computation of the likelyhood. So, we start by extracting a noisy region of the test image (see Fig. \ref{fig:test}, one could have used a frame from the PALM sequence equivalently), and after flattening the array, we plot it as a 1D signal (see Fig. \ref{fig:noise} and Fig. \ref{fig:noise-1D}).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.55]{image-test.png}
+	\caption{Test Image}
+	\label{fig:test}
+\end{figure}
+
+This unidimensional signal seems to present a gaussian noise, so we plot a histogram of its values because if we are right, we want to fit a gaussian curve to it to determine its amplitude, mean and standard deviation.
+
+\begin{figure}[h]
+     \centering
+     \subfloat[Noise]{
+         \centering
+         \includegraphics[width=0.45\textwidth]{noise.png}
+         \label{fig:noise}
+     }
+      \subfloat[Noise 1D]{
+          \centering
+         \includegraphics[width=0.45\textwidth]{noise-1D.png}
+         \label{fig:noise-1D}
+     }
+     \caption{Noise}
+\end{figure}
+
+The histogram confirms that the noise is gaussian, and we obtain its parameters through the fitted curve: $ [a = 0.06, m = 0.06, \sigma_r = 5.78] $. We then plot the cross correlation of the noise with itself to observe its spatial coherence : since the FWHM length is one (1) pixel, we understand that the noise is white.
+
+\begin{figure}[h]
+     \centering
+     \subfloat[Noise histogram]{
+         \centering
+         \includegraphics[width=0.45\textwidth]{fitted-gaussian-noise.png}
+         \label{fig:fitted}
+     }
+      \subfloat[Noise correlation]{
+          \centering
+         \includegraphics[width=0.45\textwidth]{correlation.png}
+         \label{fig:correlation}
+     }
+     \caption{Noise properties}
+\end{figure}
+
+This preliminary analysis concludes that the acquired frames are polluted by a white normal noise of parameters $ [a = 0.06, m = 0.06, \sigma_r = 5.78] $ that will be of use in the computation of likelyhood.
+
+\subsection{Accuracy analysis}\label{accuracy-analysis}
 
 For simplicity reasons and without any loss of generality, we consider the location from a 1D point of view. Let $x$ be the spatial coordinate, $\theta$ the position of an emitter. It is then assumed that the signal given by this single emitter on the image plan can be written as $s(x, \theta)=a r(x, \theta)+b$ where $r$ is a Gaussian function centered on $\theta$ so that
 
@@ -84,9 +140,9 @@ For simplicity reasons and without any loss of generality, we consider the locat
 \end{equation}
 
 
-where $\sigma_{r}$ is expressed as a function of the full width at half maximum (FWHM) $w$ of the signal on the sensor. In this labwork, $b$ is assumed to be an additive normal white noise of standard deviation $\sigma_{b}$.
+where $\sigma_{r} = w/(2\sqrt{2ln(2)})$ is expressed as a function of the full width at half maximum (FWHM) $w$ of the signal on the sensor. In this study, $b$ is assumed to be an additive normal white noise of standard deviation $\sigma_{b}$.
 
-P1 We define $r_{i}$ the integration of $r(x, \theta)$ over the pixel $i$ with $i \in[0, N-1]$
+We define $r_{i}$ the integration of $r(x, \theta)$ over the pixel $i$ with $i \in[0, N-1]$
 
 
 \begin{equation}
@@ -94,13 +150,14 @@ P1 We define $r_{i}$ the integration of $r(x, \theta)$ over the pixel $i$ with $
 \end{equation}
 
 
-where $\Delta x$ is the discretization step. Give the expression of $r_{i}$ as a function of the parameters $\theta$ and $w$. We remind that
+where $\Delta x$ is the discretization step. We can then computes the expression of $r_{i}$ as a function of the parameters $\theta$ and $w$. We remind that
 
 
 \begin{equation*}
 \frac{2}{\sqrt{\pi}} \int_{0}^{z} e^{-u^{2}} \mathrm{~d} u=\operatorname{erf}(z)
 \end{equation*}
 
+\pagebreak
 
 Let's compute $r_i$ with a integration by substitution :
 
@@ -115,7 +172,9 @@ Let's compute $r_i$ with a integration by substitution :
 r_i= & \frac{1}{2}\left[\operatorname{erf}\left[\frac{(i+1) \Delta x-\theta}{\sqrt{2} \sigma_r}\right]-\operatorname{erf}\left[\frac{i \Delta x-\theta}{\sqrt{2} \sigma_r}\right]\right]
 \end{align}
 
+Our goal is to estimate the parameter $\theta_0$ that maximizes the gaussian signal.
 
+\subsection{Position estimation without nuisance parameter: $a$ known}
 \begin{align}
 P\left(s_{;}\right) &=\frac{1}{\sqrt{2 \pi} \sigma_b} \exp \left[-\frac{\left(s_i-a r_i\right)^2}{2 \sigma_b^2}\right] \\ 
 l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^2} \sum_{s_i  \in \Omega} \left(s_i-a r_i\right)^2 \\ 
@@ -140,51 +199,44 @@ l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^
 & C R L B=2\pi\sigma_b^2\sigma_r^2 \times\left(\sum_{s_i \in \Omega}\left(e^{-u_+^2}-e^{-u_{-}^2}\right)^2\right)^{-1}
 \end{align}
 
+\subsection{Position estimation with nuisance parameter: $a$ unknown}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.65]{image-test.png}
-	\caption{Test Image}
-	\label{fig:test}
-\end{figure}
+\subsection{Choices of imaging parameters: $\theta$ and $w$}
+\paragraph{Influence of $\theta$ over precision of estimation}
 
-\begin{figure}[h]
-     \centering
-     \subfloat[Noise ]{
-         \centering
-         \includegraphics[width=0.45\textwidth]{noise.png}
-         \label{fig:noise}
-     }
-      \subfloat[Noise 1D]{
-          \centering
-         \includegraphics[width=0.45\textwidth]{noise-1D.png}
-         \label{fig:noise-1D}
-     }
-     \caption{Noise}
-\end{figure}
-
-\begin{figure}[h]
-     \centering
-     \subfloat[Noise histogram]{
-         \centering
-         \includegraphics[width=0.45\textwidth]{fitted-gaussian-noise.png}
-         \label{fig:fitted}
-     }
-      \subfloat[Noise correlation]{
-          \centering
-         \includegraphics[width=0.45\textwidth]{correlation.png}
-         \label{fig:correlation}
-     }
-     \caption{Noise properties}
-\end{figure}
+\paragraph{Influence of $w$ over precision of estimation}
 
 \section{Implementation of the algorithm}
+
+We have a sequence of 999 frames each containing 10 PSF spreaded over the frame. We are presented with the 999 frames overlayed so that it produces a blurred image (see Fig. \ref{fig:floue}) which seems to be a text. Our goal is to extract precisely the locations of the emitters producing the PSF and to arrange them into a super-resoluted grid (say 10 times wider).
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.65]{ImageFloue.JPG}
 	\caption{Image floue}
 	\label{fig:floue}
 \end{figure}
+
+To compute the Maximum Likelyhood Estimator (MLE), one should first define the model function. Here, it will be a two-dimensional gaussian function as defined in 1D in subsection \ref{accuracy-analysis}. Thus, we have the following model function, after pixel-wide integration :
+
+\begin{equation}
+\begin{aligned}
+r_{i j}\left(\theta_x, \theta_y\right)=\frac{1}{4}&\left[\operatorname{erf}\left(\frac{(i+1)-\theta_x}{\sqrt{2} \cdot \sigma_r}\right)-\operatorname{erf}\left(\frac{i-\theta_x}{\sqrt{2} \cdot \sigma_r}\right)\right] \\
+& \times\left[\operatorname{erf}\left(\frac{(j+1)-\theta_y}{\sqrt{2} \cdot \sigma_r}\right)-\operatorname{erf}\left(\frac{j-\theta_y}{\sqrt{2} \cdot \sigma_r}\right)\right]
+\end{aligned}
+\end{equation}
+
+With that in mind, we can proceed to compute the log-likelyhood :
+
+\begin{equation} \label{log-likelyhood}
+     l\left(\theta_x, \theta_y\right)=-I \cdot J \cdot \ln \left(\sqrt{2 \pi} \sigma_b\right)-\frac{1}{2 \sigma_b^2} \sum_{i=0}^{I-1} \sum_{j=0}^{J-1}\left(s_{i j}-a r_{i j}\right)^2
+\end{equation}
+
+This function will unravel its full capacity when adressing the optimization step. However, in regard to the computation time improvement, we will proceed in computing the log-likelyhood through the ambiguity function using the matched filter. The matched filter, computed as a correlation in Fourier's domain between a model function centered in its frame and the 999 acquired images, is 10 times faster than the numerical computation with the analog expression of equation \ref{log-likelyhood}.
+
+We can then export the 999 log-likelyhood arrays to import them later. They will be refered to as frames from now on.
+
+On each frame, we first locate the 10 pixel-scale global maxima and store them in a list as initial guesses for the solving function. Then, we use the fmin solving function from scipy.optimize module to locate the local maxima in a sub-pixel scale. This workflow allows to compute the log-likelyhood function according to its analog expression only in a neighbourhood of the global maxima, which significantly reduces the computation time. We plot the initial guesses and the super-resoluted emitters coordinates on Fig. \ref{fig:eval}.
 
 
 \begin{figure}[h]
@@ -194,6 +246,7 @@ l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^
 	\label{fig:eval}
 \end{figure}
 
+The coordinates seems relevant in a significant subset of the acquire image, therefore we decide now to proceed to the analysis of the 999 acquired images. On Fig. \ref{fig:pix}, one could recognize the shape of the blurred image, suggesting that the maxima should be well computed (at pixel scale and therefore at sub-pixel scale too). Fig. \ref{fig:subpix} shows reconstruction on its way\dots
 
 \begin{figure}[h]
      \centering
@@ -209,6 +262,8 @@ l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^
      }
      \caption{Computing pix and subpix coordinates}
 \end{figure}
+
+The algorithm finally produces Fig. \ref{fig:super} on which one could read a passage of the famous "Romeo and Juliette" piece written by M. William Shakespeare. This proves the described fast-algorithm still produces super-resoluted frames without significant loss in accuracy compared to the basic ones. The figure was produced in fifteen (15) minutes total, including five (5) minutes of log-likelyhood computation and export, and ten (10) minutes of super-resolution estimation, on custom desktop hardware including intel core i7 14700KF processor and NVIDIA RTX 4060 Ti 8Gb graphic card (which was not used for computation).
 
 \begin{figure}[h]
 	\centering
