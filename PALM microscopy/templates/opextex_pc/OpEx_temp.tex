@@ -174,37 +174,97 @@ r_i= & \frac{1}{2}\left[\operatorname{erf}\left[\frac{(i+1) \Delta x-\theta}{\sq
 
 Our goal is to estimate the parameter $\theta_0$ that maximizes the gaussian signal.
 
-\subsection{Position estimation without nuisance parameter: $a$ known}
+\subsection{Position estimation without nuisance parameter: a known}
+Here, a is known and equal to 1. The samples are statisticcally independent, they follow a normal probability law described in equation \ref{law} which leads to the expression \ref{log-llh} for the log-likelyhood. We then compute the derivative along $\theta$ to equal expression \ref{MLE} to zero in order to find the estimator of $\theta$, $\hat{\theta}_{ML}$.
+
 \begin{align}
-P\left(s_{;}\right) &=\frac{1}{\sqrt{2 \pi} \sigma_b} \exp \left[-\frac{\left(s_i-a r_i\right)^2}{2 \sigma_b^2}\right] \\ 
-l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^2} \sum_{s_i  \in \Omega} \left(s_i-a r_i\right)^2 \\ 
-\frac{\partial l_\theta}{\partial \theta} &=\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(s_i-a r_i\right) \times a \times \frac{\partial r_i}{\partial \theta} 
+P\left(s_{i}\right) &=\frac{1}{\sqrt{2 \pi} \sigma_b} \exp \left[-\frac{\left(s_i-a r_i\right)^2}{2 \sigma_b^2}\right] \label{law} \\ 
+l_\theta &=-N \times ln\left(\sqrt{2 \pi} \sigma_b\right) - \frac{1}{2 \sigma_b^2} \sum_{s_i  \in \Omega} \left(s_i-a r_i\right)^2 \label{log-llh} \\  
+\frac{\partial l_\theta}{\partial \theta} &=\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(s_i-a r_i\right) \times a \times \frac{\partial r_i}{\partial \theta} \label{MLE}
 \end{align}
 
+The derivativve let appear the derivative of $r_i$ along $\theta$ which is :
 
 \begin{equation}
      \frac{\partial r_i}{\partial \theta}=-\frac{1}{\sqrt{2 \pi} \sigma_r} \times\left[\exp -\left(\frac{(i+1) \Delta x-\theta}{\sqrt{2} \sigma_r}\right)^2-\exp -\left(\frac{i\Delta x-\theta}{\sqrt{2} \sigma_r}\right)^2\right]
 \end{equation}
 
+Because expression \ref{MLE} does not have any analytical solution, we solve it numerically using the fmin function from scipy.optimize dependency. We then choose a parameter $\theta_0 = 41.0050$ to estimate and we evaluate the bias and the variance of its associated estimator $\hat{\theta}_{ML}$ by using a Monte Carlo simulation over 10 000 iterations.
+
+Here we present the results of \cite{project} because ours (produced in lab 3, \cite{labwork}) cannot be computed at the moment of the redaction of this report. The presented bias is $-3.210e-04$ and the presented variance is $2.352e-04$. In regard of the computed bias, we assume the estimator non-biased.
+
+\pagebreak
+
+We then compute the Cramer Rao Lower Bound (CRLB) to see if the variance of the estimator reaches the CRLB. In this case, the estimator $\hat{\theta}_{ML}$ can be defined as efficient. In that purpose, we computes the second derivative of $l_\theta$ along $\theta$ (expression \ref{second-der}) and computes its mean (expressions \ref{CRLB-mean} and \ref{CRLB-mean-2}).
+
 \begin{align}
-\frac{\partial^2 l_\theta}{\partial^2 \theta} &=-\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(-a\left(\frac{\partial c_i}{\partial \theta}\right)^2-\left(s_i-r_i\right) \frac{\partial^2 r_i}{\partial^2 \theta}\right) \\
-\left\langle\frac{\partial^2 l_\theta}{\partial^2 \theta}\right\rangle &=-\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(-a\left(\frac{\partial r_i}{\partial \theta}\right)^2-\left(\left\langle s_i\right\rangle-\alpha r_i\right) \frac{\partial^2 l_\theta}{\partial^2 \theta}\right) \\
-\left\langle\frac{\partial^2 l_\theta}{\partial^2 \theta}\right\rangle &=\frac{a}{\sigma_b^2} \sum_{s_i \in \Omega}\left(\frac{\partial r_i}{\partial \theta}\right)^2
+\frac{\partial^2 l_\theta}{\partial^2 \theta} &=-\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(-a\left(\frac{\partial c_i}{\partial \theta}\right)^2-\left(s_i-r_i\right) \frac{\partial^2 r_i}{\partial^2 \theta}\right) \label{second-der} \\
+\left\langle\frac{\partial^2 l_\theta}{\partial^2 \theta}\right\rangle &=-\frac{1}{\sigma_b^2} \sum_{s_i \in \Omega}\left(-a\left(\frac{\partial r_i}{\partial \theta}\right)^2-\left(\left\langle s_i\right\rangle-\alpha r_i\right) \frac{\partial^2 l_\theta}{\partial^2 \theta}\right) \label{CRLB-mean}\\
+\left\langle\frac{\partial^2 l_\theta}{\partial^2 \theta}\right\rangle &=\frac{a}{\sigma_b^2} \sum_{s_i \in \Omega}\left(\frac{\partial r_i}{\partial \theta}\right)^2 \label{CRLB-mean-2}
 \end{align}
 
-
+To obtain the CRLB, we then take the negative inverse of the computed mean to finally get its expression :
 
 \begin{align}
 & C R L B=-\frac{\sigma_b^2}{1} \times\left(\sum_{s_i \in \Omega} \left(\frac{\partial r_i}{\partial \theta}\right)^2\right)^{-1} \\
 & C R L B=2\pi\sigma_b^2\sigma_r^2 \times\left(\sum_{s_i \in \Omega}\left(e^{-u_+^2}-e^{-u_{-}^2}\right)^2\right)^{-1}
 \end{align}
 
-\subsection{Position estimation with nuisance parameter: $a$ unknown}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.45]{CRLB_evol.png}
+	\caption{CRLB as a function of $\theta$}
+	\label{fig:CRLB-evol}
+\end{figure}
 
-\subsection{Choices of imaging parameters: $\theta$ and $w$}
-\paragraph{Influence of $\theta$ over precision of estimation}
+The result presented in the study is $2.568e-04$ so that we conclude the estimator is efficient \cite{project}. Because the estimator is non-biased and because it belongs to the exponential family, one could have predicted thoses results \cite{goudail}.
 
-\paragraph{Influence of $w$ over precision of estimation}
+\subsection{Position estimation with nuisance parameter: a unknown}
+In the case where a is unknown, one should first estimate its value in order to estimate the location ($\theta$). We set $a$ as a parameter in the expression of the log-likelyhood.
+\begin{equation}
+l(a, \theta)=-N \ln \left(\sqrt{2 \pi} \sigma_b\right)-\frac{1}{2 \sigma_b^2} \sum_{i=0}^{N-1}\left(s_i-a r_i\right)^2
+\end{equation}
+
+We then computes the derivative along $a$ to find the MLE $\hat{a}_{ML}$ :
+\begin{equation}
+     \left.\frac{\partial l}{\partial a}\right|_{a-\hat{a}_{M L}}=\frac{1}{\sigma_b^2} \sum_{i=0}^{N-1} r_i(\theta)\left(s_i-\hat{a}_{M L} r_i(\theta)\right)=0
+\end{equation}
+
+We get :
+\begin{equation}
+     \hat{a}_{M L}=\frac{\sum_{i=0}^{N-1} s_i r_i(\theta)}{\sum_{i=0}^{N-1} r_i(\theta)^2}
+\end{equation}
+
+Now, we inject this expression in equation \ref{log-llh}. As before, we solve it numerically. We then choose a parameter to estimate and we evaluate the bias and the variance of its associated estimator $\hat{\theta}_{ML}$ by using a Monte Carlo simulation over 10 000 iterations.
+Again (and for the same reasons as mentioned above), we present here the results of \cite{project}. The measured bias $6.998e-05$ is and the measured variance is $2.424e-04$. Again, the estimator is non biased, and because it belongs to the exponential family, we expect it to reach the CRLB.
+
+In this mean, we start by computing the Fisher Information matrix :
+
+\begin{equation}
+     I(a, \theta)=\left[\begin{array}{ll}
+          A & B \\
+          C & D
+          \end{array}\right]
+\end{equation}
+
+With the following coefficients :
+
+\begin{align}
+     & A=\frac{1}{\sigma_b^2} \sum_{i=0}^{N-1} r_i(\theta)^2 \\
+     & B=\frac{1}{\sigma_b^2} \sum_{i=0}^{N-1} \hat{a}_{M L} r_i(\theta) \frac{d r_i}{d \theta} \\
+     & C=B \\
+     & D=\frac{1}{\sigma_b^2} \sum_{i=0}^{N-1} \hat{a}_{M L}^2\left[\frac{d r_i}{d \theta}\right]^2
+\end{align}
+
+Because $I(a, \theta)$ is invertible \cite{goudail}, we compute $J(a, \theta) = I(a,\theta)^{-1}$. The CRLB is given by the coefficient (2,2) of matrix $J$, so that :
+
+\begin{equation}
+     CRLB(\theta) = \frac{A}{AD-BC}
+\end{equation}
+
+The results presented in \cite{project} suggest that no matter the knownledge of a, the estimator $\hat{\theta}_{ML}$ is efficient.
+
+\pagebreak
 
 \section{Implementation of the algorithm}
 
@@ -276,5 +336,7 @@ The algorithm finally produces Fig. \ref{fig:super} on which one could read a pa
 This study presented a specific workflow to optimize computation time for PALM microscopy. The proposed method consist in using a matched filter to compute and save the log-likelyhood arrays from the acquired frames, then use the numpy max function on those to find pixel-wide initial guesses for the scipy fmin optimization function. The time efficiency is then improved by a factor of 10, leading to compute the super-resoluted image presented at the end of section 2 in 10 minutes, while it was expected to be computed in 100 minutes with the basic fmin MLE optimization method.
 
 The workflow produces a super-resoluted image on which one could read a passage of the famous "Romeo and Juliette" piece written by M. William Shakespeare, proving the accuracy of the method.
+
+\listoffigures
 
 \end{document} 
